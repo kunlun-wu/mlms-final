@@ -1,4 +1,7 @@
+import numpy as np
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.feature_selection import RFE
+
 from functions import *
 
 X_train, X_test, y_train, y_test = load_data(
@@ -15,6 +18,7 @@ rfr_grid = {
     'model__n_estimators': [80, 100, 120]
 }
 final_model, selected_features = gridsearch_featureselect(X_train, y_train, rfr_selector, rfr_model, rfr_grid)
-y_pred = final_model.predict(X_test)
-print(f'R²: {r2_score(y_test, y_pred)}')
-parity_plot(y_test, y_pred, 'RFR')
+
+y_pred_train, y_pred_test = evaluate_model(final_model, X_train, y_train, X_test, y_test)
+
+parity_plot(y_train, y_pred_train, y_test, y_pred_test, 'RFR with RFE')
