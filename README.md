@@ -1,4 +1,4 @@
-# 1. main.py
+# 1. `main.py`
 - Contains all the functions for our own model development
 
 
