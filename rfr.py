@@ -1,24 +1,35 @@
-import numpy as np
+# import main, model, selector
+from main import *
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_selection import RFE
 
-from functions import *
-
-X_train, X_test, y_train, y_test = load_data(
-    path = 'cluster_N2/Data-files/homonuclear-159-24features.xlsx',
-    feature_start = '3_VDE/VIE',
-    feature_end = '3_IEave',
-    target_col = 'lg(k1)'
-)
-
-rfr_model = RandomForestRegressor()
-rfr_selector = RFE(rfr_model)
-rfr_grid = {
-    'feature_select__n_features_to_select': [6, 7, 8],
-    'model__n_estimators': [80, 100, 120]
+# configuration
+PATH = 'cluster_N2/Data-files/homonuclear-159-24features.xlsx'
+FEATURE_START = '3_VDE/VIE'
+FEATURE_END   = '3_IEave'
+TARGET_COL    = 'lg(k1)'
+MODEL         = RandomForestRegressor(random_state=42, n_jobs=1)
+SELECTOR      = RFE(MODEL)
+PARAM_GRID    = {
+    'feature_select__n_features_to_select': [7, 8, 9],
+    'model__n_estimators':                  list(range(200, 350, 10)),
+    'model__max_depth':                     [None, 10],
+    'model__min_samples_leaf':              [1, 2]
 }
-final_model, selected_features = gridsearch_featureselect(X_train, y_train, rfr_selector, rfr_model, rfr_grid)
+CV            = 10
+SCORING       = 'neg_root_mean_squared_error'
+SAVE_BEST     = True
 
-y_pred_train, y_pred_test = evaluate_model(final_model, X_train, y_train, X_test, y_test)
-
-parity_plot(y_train, y_pred_train, y_test, y_pred_test, 'RFR with RFE')
+# run everything
+run_everything(
+    path=PATH,
+    feature_start=FEATURE_START,
+    feature_end=FEATURE_END,
+    target_col=TARGET_COL,
+    model=MODEL,
+    selector=SELECTOR,
+    param_grid=PARAM_GRID,
+    cv = CV,
+    scoring=SCORING,
+    save_best=SAVE_BEST
+)
