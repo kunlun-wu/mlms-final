@@ -1,8 +1,8 @@
 # import main, model, selector
-from main import run_everything
+from main import *
 from sklearn.neural_network import MLPRegressor
 from sklearn.feature_selection import RFE
-
+#######DOES NOT WORK#######
 # configuration
 PATH = 'cluster_N2/Data-files/homonuclear-159-24features.xlsx'
 FEATURE_START = '3_VDE/VIE'
@@ -13,9 +13,21 @@ MODEL    = MLPRegressor(random_state=42, max_iter=2000)
 SELECTOR = RFE(estimator=MODEL, n_features_to_select=8)
 PARAM_GRID = {
     'feature_select__n_features_to_select': [7,8,9],
-    'model__hidden_layer_sizes':            [(50,), (100,), (100, 50)],
-    'model__alpha':                         [1e-4, 1e-3, 1e-2],
-    'model__learning_rate_init':            [1e-3, 1e-2]
+    'model__hidden_layer_sizes': [
+        (64, 32, 16),
+        (128, 64, 32),
+        (32, 16)
+    ],
+    'model__alpha': [
+        1e-4,
+        1e-3,
+        1e-2
+    ],
+    'model__learning_rate_init': [
+        3e-4,
+        1e-3,
+        3e-3
+    ]
 }
 CV         = 10
 SCORING    = 'neg_root_mean_squared_error'

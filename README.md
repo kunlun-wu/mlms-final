@@ -2,7 +2,7 @@
 - Contains all the functions for our own model development
 
 
-Usage template in model training files:
+Usage template for non-NN in model training files:
 ```py
 from main import *
 # import ml model
@@ -39,9 +39,9 @@ run_everything(
 ```
 
 # 2. Model files
-- The training files follow the template of `{model}.py`
-- The parity plots of all KFolds are saved as `{model}.png`
-- The best model found using grid search cross validation and KFold are saved as `{model}.joblib`
+- The training files follow the template of `{model}-{selector}.py`
+- The parity plots of all KFolds are saved as `{model}-{selector}.png`
+- The best model found using grid search cross validation and KFold are saved as `{model}-{selector}.joblib`
 
 # 3. Other files
 - `feature-label-relationship.py` plots all the features against label for initial relationship investigation

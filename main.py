@@ -11,6 +11,7 @@ import joblib
 
 #=============================================================================
 def load_data(path, feature_start, feature_end, target_col):
+    # unused in run_everything, but useful for simple testing
     print(f'Loading data from {path}')
     data = pd.read_excel(path)
     X = data.loc[:, feature_start:feature_end]
@@ -41,12 +42,10 @@ def gridsearch_featureselect(
     )
     # fit with progress bar
     with tqdm_joblib(tqdm(total=total_comp,
-                          desc="Progress:",
                           leave=False,
                           unit="fits")
-                     ) as progress_bar:
+                     ):
         gsModel.fit(X_train, y_train)
-    progress_bar.close()
     print(f"\nBest parameters: {gsModel.best_params_}")
     mask = gsModel.best_estimator_.named_steps['feature_select'].get_support()
     selected_features = X_train.columns[mask].tolist()
@@ -168,8 +167,8 @@ def run_everything(
     print(f"Best Train r: {best_train_r:.3f}", f"Best Test r: {best_test_r:.3f}")
     print(f"Best Train RMSE: {best_train_rmse:.3f}", f"Best Test RMSE: {best_test_rmse:.3f}")
     if save_best:
-        joblib.dump(best_model, f'{model.__class__.__name__}.joblib')
-        print(f"Best model saved as {model.__class__.__name__}.joblib")
+        joblib.dump(best_model, f'{model.__class__.__name__}-{selector.__class__.__name__}.joblib')
+        print(f"Best model saved as {model.__class__.__name__}-{selector.__class__.__name__}.joblib")
 
     # combined parity plot
     parity_plot(
