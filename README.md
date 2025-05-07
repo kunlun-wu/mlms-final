@@ -6,7 +6,8 @@ Usage template for non-NN in model training files:
 ```py
 from main import *
 # import ml model
-# import feature selector
+# import feature selector, consider SequentialFeatureSelector for compatibility but will slow down training
+# import scalers
 
 # configuration
 PATH = 'cluster_N2/Data-files/homonuclear-159-24features.xlsx'  # path to dataset
@@ -14,13 +15,20 @@ FEATURE_START = '3_VDE/VIE'                                     # starting colum
 FEATURE_END   = '3_IEave'                                       # ending column of features
 TARGET_COL    = 'lg(k1)'                                        # target column
 MODEL         =                                                 # insert ml model
-SELECTOR      =                                                 # insert selector(MODEL)
+SELECTOR      =                                                 # insert selector(MODEL), needs to have .get_support()
 PARAM_GRID    = {
+    # 'scaler': [                                               # if using scaler, SCALER needs to be True
+    #    StandardScaler(),
+    #    MinMaxScaler(feature_range=(0, 1)),
+    #    MinMaxScaler(feature_range=(-1, 1)),
+    #    RobustScaler(with_centering=True, with_scaling=True)
+    # ],
     # 'feature_select__PARAMETER': [list of values],
     # 'model__PARAMETER: [list of values]                  
 }
 CV            = 10                                              # to match with authors of reference paper this is 10
 SCORING       = 'neg_root_mean_squared_error'                   # the scoring being optimized for
+SCALER        = False                                           # choose scaler, False for no scaling
 SAVE_BEST     = False                                           # True saves the best model in 10 KFold splits
 
 # runs everything
@@ -34,6 +42,7 @@ run_everything(
     param_grid=PARAM_GRID,
     cv = CV,
     scoring=SCORING,
+    scaler=SCALER,
     save_best=SAVE_BEST
 )
 ```

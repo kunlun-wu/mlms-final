@@ -18,6 +18,7 @@ PARAM_GRID    = {
 }
 CV            = 10
 SCORING       = 'neg_root_mean_squared_error'
+SCALER        = False
 SAVE_BEST     = True
 
 # run everything
@@ -31,5 +32,6 @@ run_everything(
     param_grid=PARAM_GRID,
     cv = CV,
     scoring=SCORING,
+    scaler=SCALER,
     save_best=SAVE_BEST
 )

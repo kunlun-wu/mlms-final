@@ -23,14 +23,16 @@ def load_data(path, feature_start, feature_end, target_col):
 
 #=============================================================================
 def gridsearch_featureselect(
-        X_train, y_train, selector, model, param_grid, cv=10,
+        X_train, y_train, selector, model, scaler, param_grid, cv=10,
         scoring='neg_root_mean_squared_error'
 ):
     # pipeline
-    pipe = Pipeline([
-        ('feature_select', selector),
-        ('model', model),
-    ])
+    steps = []
+    if scaler:
+        steps.append(('scaler', scaler))
+    steps.append(('feature_select', selector))
+    steps.append(('model', model))
+    pipe = Pipeline(steps)
 
     # tune selector + model
     gsModel = GridSearchCV(pipe, param_grid, cv=cv, scoring=scoring, n_jobs=-1)
@@ -83,9 +85,10 @@ def parity_plot(y_train, y_pred_train, y_test, y_pred_test, model_name):
 #=============================================================================
 def run_everything(
     path, feature_start, feature_end, target_col,
-    selector, model, param_grid,
+    model, selector, param_grid,
     cv = 10,
     scoring = 'neg_root_mean_squared_error',
+    scaler=None,
     save_best = False
 ):
     # load full dataset
@@ -121,7 +124,7 @@ def run_everything(
         # nested cv + feature selection
         gs_model, selected_feats = gridsearch_featureselect(
             X_train, y_train,
-            selector, model, param_grid,
+            selector, model, scaler, param_grid,
             cv,
             scoring
         )
