@@ -4,7 +4,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_selection import SelectKBest, f_regression
 
 # configuration
-PATH = 'cluster_N2/Data-files/homonuclear-159-24features.xlsx'
+PATH = '../../cluster_N2/Data-files/homonuclear-159-24features.xlsx'
 FEATURE_START = '3_VDE/VIE'
 FEATURE_END   = '3_IEave'
 TARGET_COL    = 'lg(k1)'

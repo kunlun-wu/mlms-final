@@ -1,33 +1,44 @@
 # import main, model, selector, scaler
 from main import *
-from sklearn.svm import SVR
+from sklearn.neural_network import MLPRegressor
 from sklearn.feature_selection import SelectKBest, f_regression
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 
 # configuration
-PATH = 'cluster_N2/Data-files/homonuclear-159-24features.xlsx'
+PATH = '../../cluster_N2/Data-files/homonuclear-159-24features.xlsx'
 FEATURE_START = '3_VDE/VIE'
 FEATURE_END   = '3_IEave'
 TARGET_COL    = 'lg(k1)'
-MODEL         = SVR()
+MODEL         = MLPRegressor(
+    early_stopping = True,
+    random_state=42,
+    verbose=False,
+    max_iter=10000
+)
 SELECTOR      = SelectKBest(score_func=f_regression)
 PARAM_GRID    = {
     'scaler': [
         StandardScaler(),
+        MinMaxScaler(feature_range=(0, 1)),
+        MinMaxScaler(feature_range=(-1, 1)),
+        RobustScaler(with_centering=True, with_scaling=True)
     ],
     'feature_select__k': [7, 8, 9],
-    'model__kernel': ['rbf'],
-    'model__C': [0.1, 1, 10, 100],
-    'model__epsilon': [0.01, 0.1, 0.5, 1.0],
-    'model__degree': [2, 3, 4],
-    'model__gamma': ['scale', 'auto', 0.01, 0.1, 1.0],
-    'model__tol': [1e-4, 1e-3, 1e-2],
-    'model__shrinking': [True, False]
+    'model__hidden_layer_sizes': [
+        (100, 50, 25),
+        (120, 60, 30),
+        (150, 75, 35)
+    ],
+    'model__activation': ['relu', 'tanh'],
+    'model__solver': ['adam', 'sgd'],
+    'model__validation_fraction': [0.1, 0.2],
+    'model__alpha': [1e-4, 1e-3, 1e-2],
+    'model__learning_rate_init': [1e-4, 1e-3, 1e-2],
 }
 CV            = 10
 SCORING       = 'neg_root_mean_squared_error'
 SCALER        = True
-SAVE_BEST     = True
+SAVE_BEST     = False
 
 # run everything
 run_everything(

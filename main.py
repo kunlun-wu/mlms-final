@@ -24,7 +24,7 @@ def load_data(path, feature_start, feature_end, target_col):
 #=============================================================================
 def gridsearch_featureselect(
         X_train, y_train, selector, model, scaler, param_grid, cv=10,
-        scoring='neg_root_mean_squared_error'
+        scoring='neg_root_mean_squared_error', n_jobs=-1
 ):
     # pipeline
     steps = []
@@ -35,7 +35,7 @@ def gridsearch_featureselect(
     pipe = Pipeline(steps)
 
     # tune selector + model
-    gsModel = GridSearchCV(pipe, param_grid, cv=cv, scoring=scoring, n_jobs=-1)
+    gsModel = GridSearchCV(pipe, param_grid, cv=cv, scoring=scoring, n_jobs=n_jobs)
     # progress bar
     n_models = len(list(ParameterGrid(param_grid)))
     total_comp = cv * n_models
@@ -89,7 +89,8 @@ def run_everything(
     cv = 10,
     scoring = 'neg_root_mean_squared_error',
     scaler=None,
-    save_best = False
+    save_best = False,
+    n_jobs = -1
 ):
     # load full dataset
     print(f'Loading dataset from {path}')
@@ -126,7 +127,8 @@ def run_everything(
             X_train, y_train,
             selector, model, scaler, param_grid,
             cv,
-            scoring
+            scoring,
+            n_jobs
         )
 
         # evaluate fold
