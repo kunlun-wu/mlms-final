@@ -54,11 +54,11 @@ run_everything(
 
 # 2. Model training files `training-files`
 - The training files follow the template of `{model}-{selector}.py`
-- The following are not included, **PLEASE ASK US IF YOU NEED THEM FOR EVALUATION**:
+- The following are not included, but can be found at https://github.com/kunlun-wu/mlms-final/tree/main/results:
     - The parity plots of all KFolds are saved as `{model}-{selector}.png`
     - The best model found using grid search cross validation and KFold are saved as `{model}-{selector}.joblib`
 - `KerasModel.py` is the self-compiled NN model that is compatible with our framework in `KerasRegressor.py`
-    - it would take days to run and thus we have not completed its training
+    - it would take days to run and thus we have **NOT** completed its training
 
 # 3. Other files `other-files`
 - `feature-label-relationship.py` plots all the features against label for initial relationship investigation
