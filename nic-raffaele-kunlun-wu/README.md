@@ -66,9 +66,9 @@ run_everything(
 
 # To test our code:
 - The dataset we used can be found here: [`cluster_N2`](https://github.com/MMLhh/cluster_N2/tree/master)
-- To verify our code, put `main.py`, `{model}-{selector}.py`, and `cluster_N2` under the same directory
+- To verify our code, **put `main.py`, `{model}-{selector}.py`, and `cluster_N2` under the same directory**
     - for cleanliness of code (clear import section without `os` and `sys` lines) these files are reorganized post training
-    - check file path, auto refactoring of PyCharm might mess with the path.
+    - **check file path**, auto refactoring of PyCharm might mess with the path.
 - To run our code, run `python {model}-{selector}.py` in **terminal** instead of python console since we had incorporated a progress bar from `joblib`
     - The progress bar refreshes properly in the terminal
     - The progress bar being ran in python console will cause swamping
