@@ -1,5 +1,6 @@
 # 1. `main.py`
-- Contains all the functions for our own model development
+- Contains all the functions for model training
+- `run_everything` function provides a simple framework to configure training
 - The training scripts were loaded under the same directory, organized before uploading
 
 
@@ -29,10 +30,10 @@ PARAM_GRID    = {
     # 'model__PARAMETER: [list of values]                  
 }
 CV            = 10                                                   # to match with authors of reference paper this is 10
-SCORING       = 'neg_root_mean_squared_error'                        # the scoring being optimized for
+SCORING       = 'neg_root_mean_squared_error'                        # the scoring being optimized for, for consistency this is consistent throughout
 SCALER        = False                                                # choose scaler, False for no scaling
 SAVE_BEST     = False                                                # True saves the best model in 10 KFold splits
-N_JOBS        = 1                                                    # added later because -1 causes gpu to re-initialize for every process, causing pc freeze
+N_JOBS        = 1                                                    # added later because -1 for tensorflow model causes gpu to re-initialize for every process, causing pc freeze
 
 # runs everything
 run_everything(
@@ -51,13 +52,25 @@ run_everything(
 )
 ```
 
-# 2. Model training files
+# 2. Model training files `training-files`
 - The training files follow the template of `{model}-{selector}.py`
-- The following are not included, PLEASE ASK US IF YOU NEED THEM FOR EVALUATION:
+- The following are not included, **PLEASE ASK US IF YOU NEED THEM FOR EVALUATION**:
     - The parity plots of all KFolds are saved as `{model}-{selector}.png`
     - The best model found using grid search cross validation and KFold are saved as `{model}-{selector}.joblib`
-- `KerasModel.py` is the self-compiled NN model that is compatible with our framework in `KerasRegressor.py`, but it would take days to run and thus we have not completed it
+- `KerasModel.py` is the self-compiled NN model that is compatible with our framework in `KerasRegressor.py`
+    - it would take days to run and thus we have not completed its training
 
-# 3. Other files
+# 3. Other files `other-files`
 - `feature-label-relationship.py` plots all the features against label for initial relationship investigation
 - `verify-author-regular-learning-apporach.py` investigates generalized performance of the reference paper approach using as much of the paper's original code as possible
+
+# To test our code:
+- The dataset we used can be found here: [`cluster_N2`](https://github.com/MMLhh/cluster_N2/tree/master)
+- To verify our code, put `main.py`, `{model}-{selector}.py`, and `cluster_N2` under the same directory
+    - for cleanliness of code (clear import section without `os` and `sys` lines) these files are reorganized post training
+    - check file path, auto refactoring of PyCharm might mess with the path.
+- To run our code, run `python {model}-{selector}.py` in **terminal** instead of python console since we had incorporated a progress bar from `joblib`
+    - The progress bar refreshes properly in the terminal
+    - The progress bar being ran in python console will cause swamping
+    - The progress bar does not work for the self-compiled `KerasRegressor.py`
+- The paper that inspired our project can be found here: https://pubs.acs.org/doi/full/10.1021/acscatal.5c01379#_i30
