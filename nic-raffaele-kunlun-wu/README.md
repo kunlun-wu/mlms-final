@@ -56,7 +56,7 @@ run_everything(
 - The following are not included, please ask if you need it for evaluation:
     - The parity plots of all KFolds are saved as `{model}-{selector}.png`
     - The best model found using grid search cross validation and KFold are saved as `{model}-{selector}.joblib`
-- `KerasModel.py` is the self-compiled NN model that is compatible with our framework, but it would take days to run and thus we have not completed it
+- `KerasModel.py` is the self-compiled NN model that is compatible with our framework in `KerasRegressor.py`, but it would take days to run and thus we have not completed it
 
 # 3. Other files
 - `feature-label-relationship.py` plots all the features against label for initial relationship investigation
