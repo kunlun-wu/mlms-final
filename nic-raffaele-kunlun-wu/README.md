@@ -65,7 +65,7 @@ run_everything(
 - `verify-author-regular-learning-apporach.py` investigates generalized performance of the reference paper approach using as much of the paper's original code as possible
 
 # To test our code:
-- The dataset we used can be found here: [`cluster_N2`](https://github.com/MMLhh/cluster_N2/tree/master)
+- The dataset we used can be found here: [`cluster_N2`](https://github.com/MMLhh/cluster_N2/tree/master), in `cluster_N2/Data-files/homonuclear-159-24features.xlsx`
 - To verify our code, **PUT `main.py`, `{model}-{selector}.py`, AND `cluster_N2` UNDER THE SAME DIRECTORY**
     - for cleanliness of code (clear import section without `os` and `sys` lines) these files are reorganized post training
     - **CHECK FILE PATH**, auto refactoring of PyCharm might mess with the path.
