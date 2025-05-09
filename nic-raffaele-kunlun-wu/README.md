@@ -66,7 +66,7 @@ run_everything(
 
 # To test our code:
 - The dataset we used can be found here: [`cluster_N2`](https://github.com/MMLhh/cluster_N2/tree/master), in `cluster_N2/Data-files/homonuclear-159-24features.xlsx`
-- To verify our code, **PUT `main.py`, `{model}-{selector}.py`, AND `cluster_N2` UNDER THE SAME DIRECTORY**
+- To verify our code, **put `main.py`, `{model}-{selector}.py`, and `cluster_N2` UNDER THE SAME DIRECTORY**
     - for cleanliness of code (clear import section without `os` and `sys` lines) these files are reorganized post training
     - **CHECK FILE PATH**, auto refactoring of PyCharm might mess with the path.
 - To run our code, run `python {model}-{selector}.py` in **TERMINAL** instead of python console since we had incorporated a progress bar from `joblib`
