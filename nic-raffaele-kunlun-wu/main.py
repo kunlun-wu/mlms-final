@@ -1,37 +1,36 @@
-import pandas as pd
-import numpy as np
+import joblib
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score, ParameterGrid, KFold
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import mean_squared_error
+import numpy as np
+import pandas as pd
 from scipy.stats import pearsonr
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import GridSearchCV, KFold, ParameterGrid, train_test_split
+from sklearn.pipeline import Pipeline
 from tqdm.auto import tqdm
 from tqdm_joblib import tqdm_joblib
-import joblib
 
-#=============================================================================
+
+# =============================================================================
 def load_data(path, feature_start, feature_end, target_col):
     # unused in run_everything, but useful for simple testing
-    print(f'Loading data from {path}')
+    print(f"Loading data from {path}")
     data = pd.read_excel(path)
     X = data.loc[:, feature_start:feature_end]
     y = data[target_col]
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, train_size=0.8, random_state=42
-        )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=42)
     return X_train, X_test, y_train, y_test
 
-#=============================================================================
+
+# =============================================================================
 def gridsearch_featureselect(
-        X_train, y_train, selector, model, scaler, param_grid, cv=10,
-        scoring='neg_root_mean_squared_error', n_jobs=-1
+    X_train, y_train, selector, model, scaler, param_grid, cv=10, scoring="neg_root_mean_squared_error", n_jobs=-1
 ):
     # pipeline
     steps = []
     if scaler:
-        steps.append(('scaler', scaler))
-    steps.append(('feature_select', selector))
-    steps.append(('model', model))
+        steps.append(("scaler", scaler))
+    steps.append(("feature_select", selector))
+    steps.append(("model", model))
     pipe = Pipeline(steps)
 
     # tune selector + model
@@ -39,22 +38,18 @@ def gridsearch_featureselect(
     # progress bar
     n_models = len(list(ParameterGrid(param_grid)))
     total_comp = cv * n_models
-    print(
-        f"Running {n_models} combinations × {cv} folds = {total_comp} fits"
-    )
+    print(f"Running {n_models} combinations × {cv} folds = {total_comp} fits")
     # fit with progress bar
-    with tqdm_joblib(tqdm(total=total_comp,
-                          leave=False,
-                          unit="fits")
-                     ):
+    with tqdm_joblib(tqdm(total=total_comp, leave=False, unit="fits")):
         gsModel.fit(X_train, y_train)
     print(f"\nBest parameters: {gsModel.best_params_}")
-    mask = gsModel.best_estimator_.named_steps['feature_select'].get_support()
+    mask = gsModel.best_estimator_.named_steps["feature_select"].get_support()
     selected_features = X_train.columns[mask].tolist()
 
     return gsModel, selected_features
 
-#=============================================================================
+
+# =============================================================================
 def evaluate_model(model, X_train, y_train, X_test, y_test):
     y_pred_train = model.predict(X_train)
     y_pred_test = model.predict(X_test)
@@ -65,35 +60,40 @@ def evaluate_model(model, X_train, y_train, X_test, y_test):
 
     return y_pred_train, y_pred_test, train_r, test_r, train_rmse, test_rmse
 
-#=============================================================================
+
+# =============================================================================
 def parity_plot(y_train, y_pred_train, y_test, y_pred_test, model_name):
-    vmin = min(np.min(y_test), np.min(y_pred_test),
-               np.min(y_train), np.min(y_pred_train))
-    vmax = max(np.max(y_test), np.max(y_pred_test),
-               np.max(y_train), np.max(y_pred_train))
+    vmin = min(np.min(y_test), np.min(y_pred_test), np.min(y_train), np.min(y_pred_train))
+    vmax = max(np.max(y_test), np.max(y_pred_test), np.max(y_train), np.max(y_pred_train))
     plt.figure(figsize=(6, 6))
-    plt.scatter(y_train, y_pred_train, alpha=0.7, label='Train')
-    plt.scatter(y_test, y_pred_test, alpha=0.7, label='Test')
-    plt.plot([vmin, vmax], [vmin, vmax], 'k--', label='y = x')
-    plt.xlabel('True')
-    plt.ylabel('Predicted')
-    plt.title(f'Parity plot for {model_name}')
+    plt.scatter(y_train, y_pred_train, alpha=0.7, label="Train")
+    plt.scatter(y_test, y_pred_test, alpha=0.7, label="Test")
+    plt.plot([vmin, vmax], [vmin, vmax], "k--", label="y = x")
+    plt.xlabel("True")
+    plt.ylabel("Predicted")
+    plt.title(f"Parity plot for {model_name}")
     plt.legend()
     plt.tight_layout()
     plt.show()
 
-#=============================================================================
+
+# =============================================================================
 def run_everything(
-    path, feature_start, feature_end, target_col,
-    model, selector, param_grid,
-    cv = 10,
-    scoring = 'neg_root_mean_squared_error',
+    path,
+    feature_start,
+    feature_end,
+    target_col,
+    model,
+    selector,
+    param_grid,
+    cv=10,
+    scoring="neg_root_mean_squared_error",
     scaler=None,
-    save_best = False,
-    n_jobs = -1
+    save_best=False,
+    n_jobs=-1,
 ):
     # load full dataset
-    print(f'Loading dataset from {path}')
+    print(f"Loading dataset from {path}")
     data = pd.read_excel(path)
     X_full = data.loc[:, feature_start:feature_end]
     y_full = data[target_col]
@@ -115,7 +115,7 @@ def run_everything(
     best_fold = None
 
     # gridsearch
-    print(f'Selecting features with {selector}, optimizing for {scoring}')
+    print(f"Selecting features with {selector}, optimizing for {scoring}")
     # iterate over folds
     for fold, (train_idx, test_idx) in enumerate(kf.split(X_full), start=1):
         print(f"\n=== Fold {fold} ===")
@@ -124,11 +124,7 @@ def run_everything(
 
         # nested cv + feature selection
         gs_model, selected_feats = gridsearch_featureselect(
-            X_train, y_train,
-            selector, model, scaler, param_grid,
-            cv,
-            scoring,
-            n_jobs
+            X_train, y_train, selector, model, scaler, param_grid, cv, scoring, n_jobs
         )
 
         # evaluate fold
@@ -172,7 +168,7 @@ def run_everything(
     print(f"Best Train r: {best_train_r:.3f}", f"Best Test r: {best_test_r:.3f}")
     print(f"Best Train RMSE: {best_train_rmse:.3f}", f"Best Test RMSE: {best_test_rmse:.3f}")
     if save_best:
-        joblib.dump(best_model, f'{model.__class__.__name__}-{selector.__class__.__name__}.joblib')
+        joblib.dump(best_model, f"{model.__class__.__name__}-{selector.__class__.__name__}.joblib")
         print(f"Best model saved as {model.__class__.__name__}-{selector.__class__.__name__}.joblib")
 
     # combined parity plot
@@ -181,5 +177,5 @@ def run_everything(
         np.array(all_y_train_pred),
         np.array(all_y_test_true),
         np.array(all_y_test_pred),
-        model_name=model.__class__.__name__ + ' with ' + selector.__class__.__name__ + ' (10-fold CV)'
+        model_name=model.__class__.__name__ + " with " + selector.__class__.__name__ + " (10-fold CV)",
     )
